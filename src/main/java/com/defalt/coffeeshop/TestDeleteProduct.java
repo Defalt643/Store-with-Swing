@@ -1,21 +1,13 @@
 package com.defalt.coffeeshop;
+import database.Database;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 public class TestDeleteProduct {
     public static void main(String[] args) {
         Connection c = null;
-        String dbPath = "./db/CoffeeStore.db";
-        try {
-            Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-            System.out.println("Database connection");
-        } catch (ClassNotFoundException ex) {
-            System.out.println("Error : JDCB is not exist");
-        } catch (SQLException ex) {
-            System.out.println("Error : Database cannot connection");
-        }
-        
+        Database db = Database.getInstance();
+        c=db.getConnection();
         try{
             String updateQuery = "DELETE FROM product WHERE id=?";
             PreparedStatement statement = c.prepareStatement(updateQuery);
