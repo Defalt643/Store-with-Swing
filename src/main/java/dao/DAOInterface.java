@@ -15,6 +15,6 @@ public interface DAOInterface<T> {
     public int add(T object);
     public ArrayList<T> getAll();
     public  T get(int id);
-    public void delete(int id);
-    public void update(T object);
+    public int delete(int id);
+    public int update(T object);
 }

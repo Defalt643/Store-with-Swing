@@ -3,6 +3,7 @@ import database.Database;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Product;
 public class TestSelectProduct {
     public static void main(String[] args) {
         Connection c = null;
@@ -16,21 +17,12 @@ public class TestSelectProduct {
                 int id = result.getInt("id");
                 String name = result.getString("name");
                 double price = result.getDouble("price");
-                System.out.println(+id+" "+name+" "+price);
+                Product product = new Product(id,name,price);
+                System.out.println(product);
             }
         }catch(SQLException ex){
             Logger.getLogger(TestSelectProduct.class.getName()).log(Level.SEVERE,null,ex);
         }
-            
-        
-        
-        try {
-            if (c != null) {
-                c.close();
-            }
-
-        } catch (SQLException ex) {
-            System.out.println("Error : Cannot close database");
-        }
+        db.close();
     }
 }

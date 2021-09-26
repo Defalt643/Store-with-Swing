@@ -4,6 +4,7 @@ import database.Database;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Product;
 
 public class TestInsertProduct {
     public static void main(String[] args) {
@@ -13,8 +14,9 @@ public class TestInsertProduct {
         try{
             String insertQuery = "INSERT INTO product(name,price) VALUES(?,?)";
             PreparedStatement statement = c.prepareStatement(insertQuery);
-            statement.setString(1, "Oh Leing");
-            statement.setDouble(2,20);
+            Product product = new Product(-1,"Oh Leing",20);
+            statement.setString(1, product.getName());
+            statement.setDouble(2,product.getPrice());
             int row = statement.executeUpdate();
             ResultSet result = statement.getGeneratedKeys();
             int id=-1;
@@ -24,16 +26,6 @@ public class TestInsertProduct {
         }catch(SQLException ex){
             Logger.getLogger(TestSelectProduct.class.getName()).log(Level.SEVERE,null,ex);
         }
-            
-        
-        
-        try {
-            if (c != null) {
-                c.close();
-            }
-
-        } catch (SQLException ex) {
-            System.out.println("Error : Cannot close database");
-        }
+        db.close();
     }
 }
