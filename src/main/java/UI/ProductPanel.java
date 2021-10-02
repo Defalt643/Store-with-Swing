@@ -17,6 +17,7 @@ import model.Product;
 public class ProductPanel extends javax.swing.JPanel {
     private ArrayList<Product> productList;
     private ProductTableModel model;
+    Product editedProduct;
     /**
      * Creates new form ProductPanel
      */
@@ -24,6 +25,13 @@ public class ProductPanel extends javax.swing.JPanel {
         initComponents();
         ProductDAO productDAO = new ProductDAO();
         loadTable(productDAO);
+        initForm();
+    }public void initForm(){
+        displayID.setEnabled(false);
+        inputName.setEnabled(false);
+        inputPrice.setEnabled(false);
+        saveButton.setEnabled(false);
+        cancelButton.setEnabled(false);
     }public void loadTable(ProductDAO productDAO){
         productList=productDAO.getAll();
         model = new ProductTableModel(productList);
@@ -31,11 +39,42 @@ public class ProductPanel extends javax.swing.JPanel {
         productTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             @Override
             public void valueChanged(ListSelectionEvent e){
-                System.out.println(productTable.getSelectedRow());
+                editedProduct = productList.get(productTable.getSelectedRow());
             }
         });
     }
-
+    public void loadProductToForm(){
+        if(editedProduct.getId()>=0){
+            displayID.setText(""+editedProduct.getId());
+        }
+        inputName.setText(editedProduct.getName());
+        inputPrice.setText(""+editedProduct.getPrice());
+        displayID.setEnabled(true);
+        inputName.setEnabled(true);
+        inputPrice.setEnabled(true);
+        saveButton.setEnabled(true);
+        cancelButton.setEnabled(true);
+    }public void loadFormToProdcut(){
+        editedProduct.setName(inputName.getText());
+        editedProduct.setPrice(Double.parseDouble(inputPrice.getText()));
+    }public void refreshTable(){
+        ProductDAO productDAO = new ProductDAO();
+        ArrayList<Product> newList = productDAO.getAll();
+        productList.clear();
+        productList.addAll(newList);
+        productTable.revalidate();
+        productTable.repaint();
+    }public void clearEditForm(){
+        editedProduct = null;
+        displayID.setText("");
+        inputName.setText("");
+        inputPrice.setText("");
+        displayID.setEnabled(false);
+        inputName.setEnabled(false);
+        inputPrice.setEnabled(false);
+        saveButton.setEnabled(false);
+        cancelButton.setEnabled(false);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -53,9 +92,11 @@ public class ProductPanel extends javax.swing.JPanel {
         inputName = new javax.swing.JTextField();
         cancelButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
+        displayID = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         addButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         productTable = new javax.swing.JTable();
 
@@ -100,7 +141,10 @@ public class ProductPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(displayID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -115,7 +159,9 @@ public class ProductPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(displayID))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -145,6 +191,13 @@ public class ProductPanel extends javax.swing.JPanel {
             }
         });
 
+        editButton.setText("Edit");
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -152,6 +205,8 @@ public class ProductPanel extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(addButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(editButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deleteButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -162,7 +217,8 @@ public class ProductPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addButton)
-                    .addComponent(deleteButton))
+                    .addComponent(deleteButton)
+                    .addComponent(editButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -209,26 +265,48 @@ public class ProductPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_inputPriceActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here:
+        clearEditForm();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
+        loadFormToProdcut();
+        ProductDAO productDAO = new ProductDAO();
+        if(editedProduct.getId()>=0){
+            productDAO.update(editedProduct);
+        }else{
+            productDAO.add(editedProduct);
+        }
+        refreshTable();
+        clearEditForm();
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        // TODO add your handling code here:
+        editedProduct = new Product(-1,"",0);
+        loadProductToForm();
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        // TODO add your handling code here:
+       if(productTable.getSelectedRow()>=0){
+            ProductDAO productDAO = new ProductDAO();
+            editedProduct = productList.get(productTable.getSelectedRow());
+            productDAO.delete(editedProduct.getId());
+       }refreshTable();
     }//GEN-LAST:event_deleteButtonActionPerformed
+
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        if(productTable.getSelectedRow()>=0){
+            editedProduct = productList.get(productTable.getSelectedRow());
+        }
+        loadProductToForm();
+    }//GEN-LAST:event_editButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton deleteButton;
+    private javax.swing.JLabel displayID;
+    private javax.swing.JButton editButton;
     private javax.swing.JTextField inputName;
     private javax.swing.JTextField inputPrice;
     private javax.swing.JLabel jLabel1;
