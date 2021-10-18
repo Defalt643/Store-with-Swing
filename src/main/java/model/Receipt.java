@@ -19,6 +19,7 @@ public class Receipt {
     private User seller;
     private Customer customer;
     private ArrayList<ReceiptDetail> receiptDetail;
+    private double total = 0;
 
     public Receipt(int id, Date created, User seller, Customer customer) {
         this.id = id;
@@ -33,9 +34,9 @@ public class Receipt {
     }
 
     public void addReceiptDetail(int id, Product product, int amount, double price) {
-        for(int row = 0; row<receiptDetail.size(); row++){
+        for (int row = 0; row < receiptDetail.size(); row++) {
             ReceiptDetail r = receiptDetail.get(row);
-            if(r.getProduct().getId() == product.getId()){
+            if (r.getProduct().getId() == product.getId()) {
                 r.addAmount(amount);
                 return;
             }
@@ -44,19 +45,28 @@ public class Receipt {
     }
 
     public void addReceiptDetail(Product product, int amount) {
-        addReceiptDetail(-1, product, amount,product.getPrice());
+        addReceiptDetail(id, product, amount, product.getPrice());
     }
-    
-    public void deleteReceiptDetail(int row){
+
+    public void deleteReceiptDetail(int row) {
         receiptDetail.remove(row);
     }
-    
-    public double getTotal(){
-        double total=0;
-        for(ReceiptDetail r: receiptDetail){
-            total = total + r.getTotal();
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public double getTotal() {
+        if (this.total == 0) {
+            double total = 0;
+            for (ReceiptDetail r : receiptDetail) {
+                total = total + r.getTotal();
+            }
+            return total;
+        } else {
+            return this.total;
         }
-        return total;
+
     }
 
     public int getId() {
@@ -102,16 +112,15 @@ public class Receipt {
     @Override
     public String toString() {
         String str = "Receipt{" + "id=" + id
-                + ", created=" + created 
-                + ", seller=" + seller 
+                + ", created=" + created
+                + ", seller=" + seller
                 + ", customer=" + customer
                 + ", total =" + this.getTotal()
                 + "}\n";
-        for(ReceiptDetail r: receiptDetail){
-            str = str + r.toString()+ "\n";
+        for (ReceiptDetail r : receiptDetail) {
+            str = str + r.toString() + "\n";
         }
         return str;
     }
-
 
 }
