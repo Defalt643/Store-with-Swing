@@ -10,6 +10,7 @@ package model;
  * @author ming
  */
 public class Customer {
+
     private int id;
     private String name;
     private String tel;
@@ -18,6 +19,10 @@ public class Customer {
         this.id = id;
         this.name = name;
         this.tel = tel;
+    }
+
+    public Customer(String name, String tel) {
+        this(-1, name, tel);
     }
 
     public int getId() {
