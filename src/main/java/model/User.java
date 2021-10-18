@@ -10,7 +10,6 @@ package model;
  * @author ming
  */
 public class User {
-
     private int id;
     private String name;
     private String tel;
@@ -22,9 +21,16 @@ public class User {
         this.tel = tel;
         this.password = password;
     }
-
-    public User(String name, String tel, String password) {
-        this(-1, name, tel, password);
+    public User(String name, String tel, String password){
+        this(-1,name,tel,password);
+    }
+    
+    public User(int id, String name, String tel){
+        this(id,name,tel,"");
+    }
+    
+     public User(String name, String tel){
+        this(-1,name,tel,"");
     }
 
     public int getId() {
@@ -64,3 +70,4 @@ public class User {
         return "User{" + "id=" + id + ", name=" + name + ", tel=" + tel + ", password=" + password + '}';
     }
 }
+
