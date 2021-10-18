@@ -33,16 +33,27 @@ public class Receipt {
     }
 
     public void addReceiptDetail(int id, Product product, int amount, double price) {
+        for(int row = 0; row<receiptDetail.size(); row++){
+            ReceiptDetail r = receiptDetail.get(row);
+            if(r.getProduct().getId() == product.getId()){
+                r.addAmount(amount);
+                return;
+            }
+        }
         receiptDetail.add(new ReceiptDetail(id, product, amount, price, this));
     }
 
-    public void addReceiptDetail(Product product, int amount, double price) {
-        addReceiptDetail(-1, product, amount, price);
+    public void addReceiptDetail(Product product, int amount) {
+        addReceiptDetail(-1, product, amount,product.getPrice());
     }
-
-    public double getTotal() {
-        double total = 0;
-        for (ReceiptDetail r : receiptDetail) {
+    
+    public void deleteReceiptDetail(int row){
+        receiptDetail.remove(row);
+    }
+    
+    public double getTotal(){
+        double total=0;
+        for(ReceiptDetail r: receiptDetail){
             total = total + r.getTotal();
         }
         return total;
@@ -87,5 +98,20 @@ public class Receipt {
     public void setReceiptDetail(ArrayList<ReceiptDetail> receiptDetail) {
         this.receiptDetail = receiptDetail;
     }
+
+    @Override
+    public String toString() {
+        String str = "Receipt{" + "id=" + id
+                + ", created=" + created 
+                + ", seller=" + seller 
+                + ", customer=" + customer
+                + ", total =" + this.getTotal()
+                + "}\n";
+        for(ReceiptDetail r: receiptDetail){
+            str = str + r.toString()+ "\n";
+        }
+        return str;
+    }
+
 
 }

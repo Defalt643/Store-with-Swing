@@ -73,5 +73,19 @@ public class ReceiptDetail {
     public void setReceipt(Receipt receipt) {
         this.receipt = receipt;
     }
+    public void addAmount(int amount){
+        this.amount = this.amount+amount;
+    }
+
+    @Override
+    public String toString() {
+        return "ReceiptDetail{" + "id=" + id 
+                + ", product=" + product 
+                + ", amount=" + amount 
+                + ", price=" + price 
+                + ", total=" + this.getTotal()
+                +'}';
+    }
+
 
 }
